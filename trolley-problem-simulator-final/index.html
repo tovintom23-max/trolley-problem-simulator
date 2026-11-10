@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10151d">
+    <title>Trolley Problem Simulator | Phase 5</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <header class="topbar">
+        <div>
+            <p class="eyebrow">INTERACTIVE ETHICS SIMULATOR</p>
+            <h1>🚂 Trolley Problem</h1>
+        </div>
+
+        <div class="header-actions">
+            <span class="phase-badge">PHASE 05</span>
+            <button id="soundToggle" class="sound-button" type="button">
+                🔊 Sound: ON
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="intro">
+            <h2>Every decision has consequences.</h2>
+            <p>
+                Explore ethical dilemmas, make difficult decisions,
+                and examine the impact of your choices.
+            </p>
+        </section>
+
+        <!-- PLAYER SCORE -->
+        <section class="score-strip">
+            <article class="score-card">
+                <span class="score-icon">🏆</span>
+                <div>
+                    <small>Total Score</small>
+                    <strong id="totalScore">0</strong>
+                </div>
+            </article>
+
+            <article class="score-card">
+                <span class="score-icon">🎮</span>
+                <div>
+                    <small>Decisions Made</small>
+                    <strong id="totalDecisions">0</strong>
+                </div>
+            </article>
+
+            <article class="score-card">
+                <span class="score-icon">📊</span>
+                <div>
+                    <small>Average Impact</small>
+                    <strong id="averageImpact">--</strong>
+                </div>
+            </article>
+
+            <article class="score-card">
+                <span class="score-icon">⭐</span>
+                <div>
+                    <small>Best Score</small>
+                    <strong id="bestScore">0</strong>
+                </div>
+            </article>
+        </section>
+
+        <!-- SCENARIO SELECTOR -->
+        <section class="scenario-panel">
+            <div class="scenario-select">
+                <label for="scenarioSelect">Choose your dilemma</label>
+
+                <select id="scenarioSelect">
+                    <option value="classic">Scenario 1 — The Classic Dilemma</option>
+                    <option value="workers">Scenario 2 — Railway Workers</option>
+                    <option value="crowd">Scenario 3 — The Difficult Choice</option>
+                    <option value="bridge">Scenario 4 — The Bridge Dilemma</option>
+                    <option value="emergency">Scenario 5 — Emergency Response</option>
+                </select>
+            </div>
+
+            <div class="scenario-description">
+                <span id="scenarioCategory" class="category-tag">CLASSIC ETHICAL DILEMMA</span>
+                <h3 id="scenarioTitle">The Classic Dilemma</h3>
+                <p id="scenarioDescription">
+                    Five people are on Track A and one person is on Track B.
+                    Choose which route the trolley should follow.
+                </p>
+            </div>
+        </section>
+
+        <!-- GAME AND DECISION PANEL -->
+        <section class="game-layout">
+
+            <div class="game-column">
+
+                <div class="game-toolbar">
+                    <span id="gameStatus">Ready to begin</span>
+
+                    <button id="restartButton" class="secondary-button" type="button">
+                        ↻ Restart
+                    </button>
+                </div>
+
+                <div class="game-panel">
+
+                    <canvas id="gameCanvas" width="1000" height="560"></canvas>
+
+                    <div id="startOverlay" class="game-overlay">
+                        <div class="overlay-card">
+                            <span class="overlay-icon">🚦</span>
+                            <h2>Simulation Ready</h2>
+                            <p>
+                                Review the dilemma and start the simulation.
+                                You will have to make a decision at the junction.
+                            </p>
+                            <button id="startButton" class="primary-button" type="button">
+                                Start Simulation
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="outcomeOverlay" class="game-overlay hidden">
+                        <div class="overlay-card">
+                            <span class="overlay-icon">⚖️</span>
+                            <h2 id="outcomeTitle">Decision Complete</h2>
+                            <p id="outcomeMessage"></p>
+                            <div class="result-score">
+                                <span>Points earned</span>
+                                <strong id="earnedScore">0</strong>
+                            </div>
+                            <button id="outcomeRestartButton" class="primary-button" type="button">
+                                Play Again
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- TRACK CHOICES -->
+                <div class="track-controls">
+                    <button id="trackAButton" class="route-button route-a" disabled type="button">
+                        Choose Track A
+                    </button>
+
+                    <button id="trackBButton" class="route-button route-b" disabled type="button">
+                        Choose Track B
+                    </button>
+                </div>
+
+                <!-- SPECIAL DECISION -->
+                <section id="specialDecisionPanel" class="special-decision hidden">
+                    <h3 id="specialDecisionTitle">Additional Decision</h3>
+                    <p id="specialDecisionDescription"></p>
+
+                    <div class="special-options">
+                        <button id="specialOptionA" type="button"></button>
+                        <button id="specialOptionB" type="button"></button>
+                    </div>
+                </section>
+
+                <p class="keyboard-guide">
+                    Keyboard:
+                    <kbd>A</kbd> Track A
+                    <kbd>B</kbd> Track B
+                    <kbd>R</kbd> Restart
+                </p>
+
+            </div>
+
+            <!-- DECISION SUMMARY -->
+            <aside class="decision-panel">
+                <p class="eyebrow">CURRENT DECISION</p>
+                <h2>Decision Analysis</h2>
+
+                <div class="analysis-item">
+                    <span>People on Track A</span>
+                    <strong id="peopleAValue">5</strong>
+                </div>
+
+                <div class="analysis-item">
+                    <span>People on Track B</span>
+                    <strong id="peopleBValue">1</strong>
+                </div>
+
+                <div class="analysis-item">
+                    <span>Selected route</span>
+                    <strong id="selectedRouteValue">Not selected</strong>
+                </div>
+
+                <div class="analysis-item">
+                    <span>Potential impact</span>
+                    <strong id="potentialImpact">--</strong>
+                </div>
+
+                <div class="impact-meter">
+                    <div class="impact-meter-heading">
+                        <span>Decision impact</span>
+                        <span id="impactPercentage">0%</span>
+                    </div>
+
+                    <div class="meter-track">
+                        <div id="impactBar" class="meter-fill"></div>
+                    </div>
+                </div>
+
+                <div class="ethical-note">
+                    <strong>Ethical reflection</strong>
+                    <p id="ethicalNote">
+                        Consider the consequences of both possible choices.
+                    </p>
+                </div>
+            </aside>
+
+        </section>
+
+        <!-- ANALYTICS DASHBOARD -->
+        <section class="analytics-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">YOUR PERFORMANCE</p>
+                    <h2>Decision Analytics Dashboard</h2>
+                </div>
+
+                <button id="resetStatsButton" class="clear-button" type="button">
+                    Reset Statistics
+                </button>
+            </div>
+
+            <div class="analytics-grid">
+
+                <article class="analytics-card">
+                    <h3>Route Selection</h3>
+
+                    <div class="route-stat">
+                        <div class="route-stat-label">
+                            <span>Track A</span>
+                            <strong id="trackACount">0</strong>
+                        </div>
+                        <div class="stat-bar">
+                            <div id="trackABar" class="stat-fill track-a-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="route-stat">
+                        <div class="route-stat-label">
+                            <span>Track B</span>
+                            <strong id="trackBCount">0</strong>
+                        </div>
+                        <div class="stat-bar">
+                            <div id="trackBBar" class="stat-fill track-b-fill"></div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="analytics-card">
+                    <h3>Decision Outcomes</h3>
+
+                    <div class="outcome-stat">
+                        <span>Completed simulations</span>
+                        <strong id="completedCount">0</strong>
+                    </div>
+
+                    <div class="outcome-stat">
+                        <span>People on selected tracks</span>
+                        <strong id="selectedPeopleTotal">0</strong>
+                    </div>
+
+                    <div class="outcome-stat">
+                        <span>Average points per decision</span>
+                        <strong id="averagePoints">0</strong>
+                    </div>
+                </article>
+
+                <article class="analytics-card">
+                    <h3>Score Breakdown</h3>
+
+                    <div class="outcome-stat">
+                        <span>Decision points</span>
+                        <strong id="decisionPoints">0</strong>
+                    </div>
+
+                    <div class="outcome-stat">
+                        <span>Completion bonuses</span>
+                        <strong id="completionPoints">0</strong>
+                    </div>
+
+                    <div class="outcome-stat">
+                        <span>Total points</span>
+                        <strong id="dashboardScore">0</strong>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- DECISION HISTORY -->
+        <section class="history-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">YOUR GAME RECORD</p>
+                    <h2>Decision History</h2>
+                </div>
+                <span id="historyCount" class="history-count">0</span>
+            </div>
+
+            <div id="historyList" class="history-list">
+                <div class="empty-history">
+                    <span>📋</span>
+                    <p>No decisions yet.</p>
+                    <small>Complete a scenario to see your history.</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- INSTRUCTIONS -->
+        <section class="instructions">
+            <h2>How to play</h2>
+
+            <div class="instruction-grid">
+                <article>
+                    <span>01</span>
+                    <h3>Select a dilemma</h3>
+                    <p>Choose one of the five ethical scenarios.</p>
+                </article>
+
+                <article>
+                    <span>02</span>
+                    <h3>Start the simulation</h3>
+                    <p>Watch the trolley approach the junction.</p>
+                </article>
+
+                <article>
+                    <span>03</span>
+                    <h3>Make your choice</h3>
+                    <p>Select a track or answer the special decision.</p>
+                </article>
+
+                <article>
+                    <span>04</span>
+                    <h3>Review your impact</h3>
+                    <p>Earn points and examine your decision analytics.</p>
+                </article>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Trolley Problem Simulator · Phase 5.1 · Developed by Tovin Tom</p>
+    </footer>
+
+</body>
+</html>
